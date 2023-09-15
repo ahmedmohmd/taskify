@@ -22,7 +22,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       });
     }
 
-    const checkPassword = await protectPasswordUtil.check(
+  const checkPassword = await protectPasswordUtil.check(
       req.body.password,
       user.password
     );

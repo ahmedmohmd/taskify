@@ -10,7 +10,7 @@ const generateWebToken = (data: TokenData) => {
 };
 
 const verifyWebToken = (token: string) => {
-  return jwt.sign(token, process.env.JWT_SECRET_KEY!);
+  return jwt.verify(token, process.env.JWT_SECRET_KEY!);
 };
 
 export default { generateWebToken, verifyWebToken };

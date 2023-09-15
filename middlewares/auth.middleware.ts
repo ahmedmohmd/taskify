@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import prisma from "../db/prismaClient";
 import jwtUtil from "../utils/jwt.util";
 
 const authUser = async (req: Request, res: Response, next: NextFunction) => {
@@ -12,8 +13,16 @@ const authUser = async (req: Request, res: Response, next: NextFunction) => {
     const token = authHeader.split(" ")[1];
     const decodedToken = await jwtUtil.verifyWebToken(token);
 
-    if (!decodedToken) {
+    if (!decodedToken || typeof decodedToken === "string") {
       return res.status(403).json({ message: "Sorry, are not Authunticated!" });
+    }
+
+    const targetUser = prisma.user.findUnique({
+      where: { email: decodedToken.email },
+    });
+
+    if (!targetUser) {
+      return res.status(403).json({ message: "User not Found!" });
     }
 
     Object.defineProperty(req, "user", {
