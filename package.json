@@ -12,9 +12,15 @@
     "start": "node app.js"
   },
   "devDependencies": {
+    "@prisma/client": "^5.3.1",
+    "@types/express": "^4.17.17",
     "@types/node": "^20.6.1",
     "nodemon": "^3.0.1",
+    "prisma": "^5.3.1",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
   }
 }
