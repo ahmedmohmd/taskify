@@ -4,7 +4,13 @@ import validateMiddleware from "../middlewares/validate.middleware";
 
 const router = express.Router();
 
-router.post("/login", authController.login);
+router.post(
+  "/login",
+  validateMiddleware.validateEmail,
+  validateMiddleware.validatePassword,
+  authController.login
+);
+
 router.post(
   "/register",
   validateMiddleware.validateEmail,

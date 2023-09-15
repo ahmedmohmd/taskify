@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import validtor from "validator";
 import prisma from "../db/prismaClient";
+import jwtUtil from "../utils/jwt.util";
 
 const login = async ({ body }: Request, res: Response, next: NextFunction) => {
   try {
@@ -15,17 +15,18 @@ const login = async ({ body }: Request, res: Response, next: NextFunction) => {
     });
 
     if (!user) {
-      res.status(404).json({
+      return res.status(404).json({
         message: "User not found!",
       });
     }
 
-    res.json({
-      user: user,
+    const token = await jwtUtil.generateWebToken({
+      name: user.name,
+      email: user.email,
     });
 
     res.json({
-      user: user,
+      token: token,
     });
   } catch (error) {
     next(error);
@@ -46,8 +47,14 @@ const register = async (
       },
     });
 
+    const token = await jwtUtil.generateWebToken({
+      name: user.name,
+      email: user.email,
+    });
+
     res.json({
       user: user,
+      token: token,
     });
   } catch (error) {
     next(error);

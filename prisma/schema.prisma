@@ -17,15 +17,26 @@ model User {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  tasks      Task[]
+  tasks     Task[]
 }
 
 model Task {
-  id          String @id @default(uuid())
+  id          String    @id @default(uuid())
   title       String
-  description String
-  owner       User   @relation(fields: [ownerId], references: [id])
+  description String?
+  owner       User      @relation(fields: [ownerId], references: [id])
   ownerId     String
+  subtasks    SubTask[] 
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model SubTask {
+  id          Int     @id @default(autoincrement())
+  title       String
+  discription String?
+  primaryTask        Task?   @relation(fields: [taskId], references: [id])
+  taskId      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

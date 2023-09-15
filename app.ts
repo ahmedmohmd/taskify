@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express, {
   ErrorRequestHandler,
   NextFunction,

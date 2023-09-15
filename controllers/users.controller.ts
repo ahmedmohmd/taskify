@@ -5,7 +5,6 @@ const getSingleUser = async ({ params }: Request, res: Response) => {
   try {
     const { userId } = params;
 
-    console.log(userId);
     const user = await prisma.user.findUnique({
       where: {
         id: userId,

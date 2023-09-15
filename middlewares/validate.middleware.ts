@@ -19,6 +19,7 @@ const validateEmail = (
     next(error);
   }
 };
+
 const validatePassword = (
   { body }: Request,
   res: Response,
