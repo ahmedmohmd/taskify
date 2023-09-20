@@ -3,7 +3,7 @@ import subTasksController from "../controllers/subTasks.controller";
 
 const router = express.Router();
 
-router.get("/", subTasksController.getSubTasks);
+router.get("/", subTasksController.getAllSubTasks);
 router.get("/:subTaskId", subTasksController.getSingleSubTask);
 router.post("/", subTasksController.createSubTask);
 router.patch("/:subTaskId", subTasksController.updateSubTask);

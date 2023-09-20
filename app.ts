@@ -24,18 +24,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use("/api/", homeRouter);
-app.use("/api/users/", usersRouter);
 app.use("/api/auth/", authRouter);
+app.use("/api/users/", usersRouter);
 app.use("/api/tasks/", tasksRouter);
 app.use("/api/subtasks/", subTasksRouter);
 
 app.use(
-  (
-    err: ErrorRequestHandler,
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  (err: ErrorRequestHandler, _: Request, res: Response, __: NextFunction) => {
     console.error(err);
     return res.status(500).json({
       message: "An error occurred!",

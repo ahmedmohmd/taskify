@@ -1,13 +1,19 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import prisma from "../db/prismaClient";
-import { SubTask } from "../types/subTasks.types";
+import { CustomSubTasksRequest } from "../types/subTasks.types";
+import isValidString from "../utils/isValidString.util";
 
-const getSubTasks = async (
-  req: Request | any,
+const getAllSubTasks = async (
+  req: CustomSubTasksRequest,
   res: Response,
   next: NextFunction
 ) => {
   const taskId = req.query?.taskId;
+  if (!isValidString(taskId)) {
+    return res.status(400).json({
+      error: "The `taskId` query parameter is required and must not be empty.",
+    });
+  }
 
   try {
     const subTasks = await prisma.subTask.findMany({
@@ -31,18 +37,29 @@ const getSubTasks = async (
 };
 
 const getSingleSubTask = async (
-  req: Request,
+  { params, query }: CustomSubTasksRequest,
   res: Response,
   next: NextFunction
 ) => {
-  const taskId = req.query?.taskId;
-  const subTaskId = req.params.subTaskId;
+  const { taskId } = query;
+  if (!isValidString(taskId)) {
+    return res.status(400).json({
+      error: "The `taskId` query parameter is required and must not be empty.",
+    });
+  }
+
+  const { subTaskId } = params;
+  if (!isValidString(subTaskId)) {
+    return res.status(400).json({
+      error: "The `subTaskId` parameter is required.",
+    });
+  }
 
   try {
     const subTask = await prisma.subTask.findUnique({
       where: {
         id: +subTaskId,
-        taskId: taskId?.toString(),
+        taskId: taskId,
       },
     });
 
@@ -61,18 +78,35 @@ const getSingleSubTask = async (
 };
 
 const createSubTask = async (
-  req: Request | any,
+  { body, query }: CustomSubTasksRequest,
   res: Response,
   next: NextFunction
 ) => {
-  try {
-    const taskId = req.query?.taskId;
+  const { taskId } = query;
+  if (!isValidString(taskId)) {
+    return res.status(400).json({
+      error: "The `taskId` query parameter is required and must not be empty.",
+    });
+  }
 
+  const { title, description } = body;
+
+  const isValidTitle = isValidString(title);
+  const isValidDescription = isValidString(description);
+
+  if (!isValidTitle || !isValidDescription) {
+    res.status(400).json({
+      error:
+        "The `title` and `description`  fields are required and must not be empty.",
+    });
+  }
+
+  try {
     let createdSubTask = await prisma.subTask.create({
       data: {
-        title: req.body?.title,
-        description: req.body?.description,
-        taskId: taskId,
+        title,
+        description,
+        taskId,
       },
     });
 
@@ -85,28 +119,41 @@ const createSubTask = async (
 };
 
 const updateSubTask = async (
-  req: Request,
+  { params, query, body }: CustomSubTasksRequest,
   res: Response,
   next: NextFunction
 ) => {
-  try {
-    const { subTaskId } = req.params;
-    const taskId = req.query?.taskId;
+  const { subTaskId } = params;
+  if (!isValidString(subTaskId)) {
+    return res.status(400).json({
+      error: "The `subTaskId` parameter is required.",
+    });
+  }
 
+  const { taskId } = query;
+  if (!isValidString(taskId)) {
+    return res.status(400).json({
+      error: "The `taskId` query parameter is required and must not be empty.",
+    });
+  }
+
+  const { title, description } = body;
+
+  try {
     const updatedSubTask = await prisma.subTask.update({
       where: {
         id: +subTaskId,
-        taskId: taskId?.toString(),
+        taskId: taskId,
       },
 
       data: {
-        title: req.body?.title,
-        description: req.body?.description,
+        title,
+        description,
       },
     });
 
     res.json({
-      updatedTask: updatedSubTask,
+      result: updatedSubTask,
     });
   } catch (error) {
     next(error);
@@ -114,29 +161,40 @@ const updateSubTask = async (
 };
 
 const deleteSubTask = async (
-  req: Request,
+  { params, query }: CustomSubTasksRequest,
   res: Response,
   next: NextFunction
 ) => {
-  try {
-    const { subTaskId } = req.params;
-    const taskId = req.query?.taskId;
+  const { subTaskId } = params;
+  if (!isValidString(subTaskId)) {
+    return res.status(400).json({
+      error: "The `subTaskId` parameter is required.",
+    });
+  }
 
+  const { taskId } = query;
+  if (!isValidString(taskId)) {
+    return res.status(400).json({
+      error: "The `taskId` query parameter is required and must not be empty.",
+    });
+  }
+
+  try {
     await prisma.subTask.delete({
       where: {
         id: +subTaskId,
-        taskId: taskId?.toString(),
+        taskId,
       },
     });
 
-    res.json("Sub Task deleted successfully.");
+    res.json("SubTask deleted successfully.");
   } catch (error) {
     next(error);
   }
 };
 
 export default {
-  getSubTasks,
+  getAllSubTasks,
   getSingleSubTask,
   deleteSubTask,
   updateSubTask,
