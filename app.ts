@@ -1,3 +1,4 @@
+import cors from "cors";
 import "dotenv/config";
 import express, {
   ErrorRequestHandler,
@@ -12,6 +13,12 @@ import tasksRouter from "./routes/tasks.route";
 import usersRouter from "./routes/users.route";
 
 const app = express();
+
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
