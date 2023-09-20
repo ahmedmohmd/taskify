@@ -18,7 +18,7 @@ const authUser = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     const targetUser = prisma.user.findUnique({
-      where: { email: decodedToken.email },
+      where: { email: decodedToken.email, id: decodedToken.id },
     });
 
     if (!targetUser) {

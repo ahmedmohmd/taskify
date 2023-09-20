@@ -7,6 +7,8 @@ import express, {
 } from "express";
 import authRouter from "./routes/auth.route";
 import homeRouter from "./routes/home.route";
+import subTasksRouter from "./routes/subTasks.route";
+import tasksRouter from "./routes/tasks.route";
 import usersRouter from "./routes/users.route";
 
 const app = express();
@@ -17,6 +19,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/api/", homeRouter);
 app.use("/api/users/", usersRouter);
 app.use("/api/auth/", authRouter);
+app.use("/api/tasks/", tasksRouter);
+app.use("/api/subtasks/", subTasksRouter);
 
 app.use(
   (

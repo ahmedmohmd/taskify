@@ -10,6 +10,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
         email: req.body.email,
       },
       select: {
+        id: true,
         name: true,
         email: true,
         password: true,
@@ -22,7 +23,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       });
     }
 
-  const checkPassword = await protectPasswordUtil.check(
+    const checkPassword = await protectPasswordUtil.check(
       req.body.password,
       user.password
     );
@@ -34,6 +35,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     const token = await jwtUtil.generateWebToken({
+      id: user.id,
       name: user.name,
       email: user.email,
     });
