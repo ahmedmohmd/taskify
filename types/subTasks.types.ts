@@ -1,6 +1,5 @@
 import { Request } from "express";
 import type { Task } from "./tasks.types";
-import { User } from "./users.types";
 
 interface SubTask {
   id: number;
@@ -17,6 +16,5 @@ interface CustomSubTasksRequest extends Request {
     taskId: string;
   };
 }
-// type CustomSubTasksRequest = Request | { query: { taskId: string } };
 
 export { CustomSubTasksRequest, SubTask };

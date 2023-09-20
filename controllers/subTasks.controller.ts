@@ -89,7 +89,7 @@ const createSubTask = async (
     });
   }
 
-  const { title, description } = body;
+  const { title, description, done, labels, deadline } = body;
 
   const isValidTitle = isValidString(title);
   const isValidDescription = isValidString(description);
@@ -107,6 +107,7 @@ const createSubTask = async (
         title,
         description,
         taskId,
+        done,
       },
     });
 
@@ -137,7 +138,7 @@ const updateSubTask = async (
     });
   }
 
-  const { title, description } = body;
+  const { title, description, done } = body;
 
   try {
     const updatedSubTask = await prisma.subTask.update({
@@ -149,6 +150,7 @@ const updateSubTask = async (
       data: {
         title,
         description,
+        done,
       },
     });
 
