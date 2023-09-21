@@ -18,4 +18,3 @@ interface CustomTasksRequest extends Request {
 }
 
 export { CustomTasksRequest, Task };
-
