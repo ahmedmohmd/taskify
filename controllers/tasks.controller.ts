@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import prisma from "../db/prismaClient";
-import { SubTask } from "../types/subTasks.types";
 
 const getTasks = async (
   req: Request | any,
