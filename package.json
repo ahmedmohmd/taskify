@@ -2,7 +2,7 @@
   "name": "Taskify",
   "version": "1.0.0",
   "description": "Taskify: Simplify life and work with our intuitive task app. Effortlessly create, prioritize, and collaborate on tasks. Stay organized, boost productivity, and track progress in real-time. Whether personal goals or team projects, Taskify streamlines it all. Download now to take control of your tasks and achieve more.",
-  "main": "index.js",
+  "main": "./app.ts",
   "repository": "https://github.com/ahmedmohmd/taskify",
   "author": "ahmedmohmd <er.ahmed.3301@gmail.com>",
   "license": "MIT",
