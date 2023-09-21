@@ -1,8 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 import prisma from "../db/prismaClient";
+import { CustomTasksRequest } from "../types/tasks.types";
+import isValidString from "../utils/isValidString.util";
+import {
+  errorResponse,
+  successResponse,
+} from "../utils/responseStructure.util";
 
 const getTasks = async (
-  req: Request | any,
+  req: CustomTasksRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -17,14 +23,10 @@ const getTasks = async (
     });
 
     if (!tasks) {
-      return res.status(404).json({
-        message: "Task not found",
-      });
+      errorResponse(res, 404, "Task not found.");
     }
 
-    res.json({
-      tasks: tasks,
-    });
+    successResponse(res, 200, tasks);
   } catch (error) {
     next(error);
   }
@@ -35,9 +37,12 @@ const getSingleTask = async (
   res: Response,
   next: NextFunction
 ) => {
-  try {
-    const taskId = req.params.taskId;
+  const taskId = req.params.taskId;
+  if (!isValidString(taskId)) {
+    errorResponse(res, 400, "The `taskId` parameter is required.");
+  }
 
+  try {
     const task = await prisma.task.findUnique({
       where: {
         id: taskId,
@@ -45,74 +50,103 @@ const getSingleTask = async (
     });
 
     if (!task) {
-      return res.status(404).json({
-        message: "Task not found",
-      });
+      errorResponse(res, 404, "Task not found.");
     }
 
-    res.json({
-      task: task,
-    });
+    successResponse(res, 200, task);
   } catch (error) {
     next(error);
   }
 };
 
 const createTask = async (
-  req: Request | any,
+  { body, user }: CustomTasksRequest,
   res: Response,
   next: NextFunction
 ) => {
+  const { title, description } = body;
+  const isValidTitle = isValidString(title);
+  const isValidDescription = isValidString(description);
+
+  if (!isValidTitle || !isValidDescription) {
+    errorResponse(
+      res,
+      400,
+      "The `title` and `description`  fields are required and must not be empty."
+    );
+  }
+
+  const { id } = user;
+
   try {
-    let createdTask = await prisma.task.create({
+    const createdTask = await prisma.task.create({
       data: {
-        title: req.body?.title,
-        description: req.body?.description,
-        ownerId: req.user.id,
+        title,
+        description,
+        ownerId: id,
       },
     });
 
-    res.json({
-      task: createdTask,
-    });
+    successResponse(res, 201, createdTask);
   } catch (error) {
     next(error);
   }
 };
 
-const updateTask = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { taskId } = req.params;
+const updateTask = async (
+  { params, body }: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { taskId } = params;
+  if (!isValidString(taskId)) {
+    errorResponse(res, 400, "The `taskId` parameter is required.");
+  }
 
-    const targetTask = await prisma.task.update({
+  const { title, description } = body;
+
+  const isValidTitle = isValidString(title);
+  const isValidDescription = isValidString(description);
+
+  if (!isValidTitle || !isValidDescription) {
+    errorResponse(
+      res,
+      400,
+      "The `title` and `description`  fields are required and must not be empty."
+    );
+  }
+
+  try {
+    const updatedTask = await prisma.task.update({
       where: {
         id: taskId,
       },
       data: {
-        title: req.body?.title,
-        description: req.body?.description,
+        title,
+        description,
       },
     });
 
-    res.json({
-      updatedTask: targetTask,
-    });
+    successResponse(res, 200, updatedTask);
   } catch (error) {
     next(error);
   }
 };
 
 const deleteTask = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { taskId } = req.params;
+  const { taskId } = req.params;
+  if (!isValidString(taskId)) {
+    errorResponse(res, 400, "The `taskId` parameter is required.");
+  }
 
+  try {
     await prisma.task.delete({
       where: {
         id: taskId,
       },
     });
 
-    res.json("Task deleted successfully.");
+    successResponse(res, 204);
   } catch (error) {
     next(error);
   }

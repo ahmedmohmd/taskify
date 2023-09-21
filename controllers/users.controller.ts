@@ -2,6 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import prisma from "../db/prismaClient";
 import isValidString from "../utils/isValidString.util";
 import protectPasswordUtil from "../utils/protectPassword.util";
+import {
+  errorResponse,
+  successResponse,
+} from "../utils/responseStructure.util";
 
 const getSingleUser = async (
   { params }: Request,
@@ -11,9 +15,11 @@ const getSingleUser = async (
   const { userId } = params;
 
   if (!isValidString(userId)) {
-    return res.status(400).json({
-      error: "The `taskId` query parameter is required and must not be empty.",
-    });
+    errorResponse(
+      res,
+      400,
+      "The `taskId` query parameter is required and must not be empty."
+    );
   }
 
   try {
@@ -24,12 +30,10 @@ const getSingleUser = async (
     });
 
     if (!user) {
-      return res.status(404).json({ error: "User not found!" });
+      errorResponse(res, 404, "User not found!");
     }
 
-    res.json({
-      user: user,
-    });
+    successResponse(res, 200, user);
   } catch (error) {
     next(error);
   }
@@ -38,13 +42,15 @@ const getSingleUser = async (
 const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   const { userId } = req.params;
   if (!isValidString(userId)) {
-    return res.status(400).json({
-      error: "The `taskId` query parameter is required and must not be empty.",
-    });
+    errorResponse(
+      res,
+      400,
+      "The `taskId` query parameter is required and must not be empty."
+    );
   }
 
   try {
-    await prisma.user.update({
+    const updatedUser = await prisma.user.update({
       where: {
         id: userId,
       },
@@ -54,7 +60,7 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
       },
     });
 
-    res.json("User Updated Successfully.");
+    successResponse(res, 200, updatedUser);
   } catch (error) {
     next(error);
   }
@@ -63,9 +69,11 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
 const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
   const { userId } = req.params;
   if (!isValidString(userId)) {
-    return res.status(400).json({
-      error: "The `taskId` query parameter is required and must not be empty.",
-    });
+    errorResponse(
+      res,
+      400,
+      "The `taskId` query parameter is required and must not be empty."
+    );
   }
 
   try {
@@ -75,7 +83,7 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
       },
     });
 
-    res.json("User deleted successfully");
+    successResponse(res, 204);
   } catch (error) {
     next(error);
   }

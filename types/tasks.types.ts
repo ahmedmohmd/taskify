@@ -1,4 +1,5 @@
 import { SubTask } from "./subTasks.types";
+import { User } from "./users.types";
 
 interface Task {
   id: string;
@@ -11,4 +12,9 @@ interface Task {
   updatedAt?: Date;
 }
 
-export { Task };
+interface CustomTasksRequest extends Request {
+  user: User;
+  body: any;
+}
+
+export { CustomTasksRequest, Task };

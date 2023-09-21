@@ -2,6 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import prisma from "../db/prismaClient";
 import jwtUtil from "../utils/jwt.util";
 import protectPasswordUtil from "../utils/protectPassword.util";
+import {
+  errorResponse,
+  successResponse,
+} from "../utils/responseStructure.util";
 
 const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -18,9 +22,8 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     });
 
     if (!user) {
-      return res.status(404).json({
-        message: "User not found!",
-      });
+      errorResponse(res, 404, "User not found!");
+      return;
     }
 
     const checkPassword = await protectPasswordUtil.check(
@@ -29,9 +32,8 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     );
 
     if (!checkPassword) {
-      return res.status(404).json({
-        message: "Your password is incorrect!",
-      });
+      errorResponse(res, 404, "Your password is incorrect!");
+      return;
     }
 
     const token = await jwtUtil.generateWebToken({
@@ -40,9 +42,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       email: user.email,
     });
 
-    res.json({
-      token: token,
-    });
+    successResponse(res, 200, token);
   } catch (error) {
     next(error);
   }
@@ -69,7 +69,7 @@ const register = async (
       email: user.email,
     });
 
-    res.json({
+    successResponse(res, 200, {
       user: user,
       token: token,
     });

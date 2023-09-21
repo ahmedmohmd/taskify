@@ -2,6 +2,10 @@ import { NextFunction, Response } from "express";
 import prisma from "../db/prismaClient";
 import { CustomSubTasksRequest } from "../types/subTasks.types";
 import isValidString from "../utils/isValidString.util";
+import {
+  errorResponse,
+  successResponse,
+} from "../utils/responseStructure.util";
 
 const getAllSubTasks = async (
   req: CustomSubTasksRequest,
@@ -10,9 +14,11 @@ const getAllSubTasks = async (
 ) => {
   const taskId = req.query?.taskId;
   if (!isValidString(taskId)) {
-    return res.status(400).json({
-      error: "The `taskId` query parameter is required and must not be empty.",
-    });
+    errorResponse(
+      res,
+      400,
+      "The `taskId` query parameter is required and must not be empty."
+    );
   }
 
   try {
@@ -43,16 +49,18 @@ const getSingleSubTask = async (
 ) => {
   const { taskId } = query;
   if (!isValidString(taskId)) {
-    return res.status(400).json({
-      error: "The `taskId` query parameter is required and must not be empty.",
-    });
+    errorResponse(
+      res,
+      400,
+      "The `taskId` query parameter is required and must not be empty."
+    );
   }
 
   const { subTaskId } = params;
   if (!isValidString(subTaskId)) {
-    return res.status(400).json({
-      error: "The `subTaskId` parameter is required.",
-    });
+    if (!isValidString(subTaskId)) {
+      errorResponse(res, 400, "The `subTaskId` parameter is required.");
+    }
   }
 
   try {
@@ -69,9 +77,7 @@ const getSingleSubTask = async (
       });
     }
 
-    res.json({
-      subTask: subTask,
-    });
+    successResponse(res, 200, subTask);
   } catch (error) {
     next(error);
   }
@@ -84,9 +90,11 @@ const createSubTask = async (
 ) => {
   const { taskId } = query;
   if (!isValidString(taskId)) {
-    return res.status(400).json({
-      error: "The `taskId` query parameter is required and must not be empty.",
-    });
+    errorResponse(
+      res,
+      400,
+      "The `taskId` query parameter is required and must not be empty."
+    );
   }
 
   const { title, description, done, labels, deadline } = body;
@@ -95,10 +103,11 @@ const createSubTask = async (
   const isValidDescription = isValidString(description);
 
   if (!isValidTitle || !isValidDescription) {
-    res.status(400).json({
-      error:
-        "The `title` and `description`  fields are required and must not be empty.",
-    });
+    errorResponse(
+      res,
+      400,
+      "The `title` and `description`  fields are required and must not be empty."
+    );
   }
 
   try {
@@ -111,9 +120,7 @@ const createSubTask = async (
       },
     });
 
-    res.json({
-      result: createdSubTask,
-    });
+    successResponse(res, 200, createdSubTask);
   } catch (error) {
     next(error);
   }
@@ -126,16 +133,16 @@ const updateSubTask = async (
 ) => {
   const { subTaskId } = params;
   if (!isValidString(subTaskId)) {
-    return res.status(400).json({
-      error: "The `subTaskId` parameter is required.",
-    });
+    errorResponse(res, 400, "The `subTaskId` parameter is required.");
   }
 
   const { taskId } = query;
   if (!isValidString(taskId)) {
-    return res.status(400).json({
-      error: "The `taskId` query parameter is required and must not be empty.",
-    });
+    errorResponse(
+      res,
+      400,
+      "The `taskId` query parameter is required and must not be empty."
+    );
   }
 
   const { title, description, done } = body;
@@ -154,9 +161,7 @@ const updateSubTask = async (
       },
     });
 
-    res.json({
-      result: updatedSubTask,
-    });
+    successResponse(res, 200, updatedSubTask);
   } catch (error) {
     next(error);
   }
@@ -169,16 +174,18 @@ const deleteSubTask = async (
 ) => {
   const { subTaskId } = params;
   if (!isValidString(subTaskId)) {
-    return res.status(400).json({
-      error: "The `subTaskId` parameter is required.",
-    });
+    if (!isValidString(subTaskId)) {
+      errorResponse(res, 400, "The `subTaskId` parameter is required.");
+    }
   }
 
   const { taskId } = query;
   if (!isValidString(taskId)) {
-    return res.status(400).json({
-      error: "The `taskId` query parameter is required and must not be empty.",
-    });
+    errorResponse(
+      res,
+      400,
+      "The `taskId` query parameter is required and must not be empty."
+    );
   }
 
   try {
@@ -189,7 +196,7 @@ const deleteSubTask = async (
       },
     });
 
-    res.json("SubTask deleted successfully.");
+    successResponse(res, 204);
   } catch (error) {
     next(error);
   }
