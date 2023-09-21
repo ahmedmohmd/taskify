@@ -2,7 +2,7 @@
   "name": "Taskify",
   "version": "1.0.0",
   "description": "Taskify: Simplify life and work with our intuitive task app. Effortlessly create, prioritize, and collaborate on tasks. Stay organized, boost productivity, and track progress in real-time. Whether personal goals or team projects, Taskify streamlines it all. Download now to take control of your tasks and achieve more.",
-  "main": "./app.js",
+  "main": "./dist/app.js",
   "repository": "https://github.com/ahmedmohmd/taskify",
   "author": "ahmedmohmd <er.ahmed.3301@gmail.com>",
   "license": "MIT",
@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "nodemon app.ts",
     "build": "tsc",
-    "start": "node ./app.js"
+    "start": "node ./dist/app.js"
   },
   "devDependencies": {
     "@prisma/client": "^5.3.1",
