@@ -20,6 +20,7 @@ const getSingleUser = async (
       400,
       "The `taskId` query parameter is required and must not be empty."
     );
+    return;
   }
 
   try {
@@ -47,6 +48,7 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
       400,
       "The `taskId` query parameter is required and must not be empty."
     );
+    return;
   }
 
   try {
@@ -74,6 +76,7 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
       400,
       "The `taskId` query parameter is required and must not be empty."
     );
+    return;
   }
 
   try {

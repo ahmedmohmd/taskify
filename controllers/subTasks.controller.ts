@@ -19,6 +19,7 @@ const getAllSubTasks = async (
       400,
       "The `taskId` query parameter is required and must not be empty."
     );
+    return;
   }
 
   try {
@@ -54,6 +55,7 @@ const getSingleSubTask = async (
       400,
       "The `taskId` query parameter is required and must not be empty."
     );
+    return;
   }
 
   const { subTaskId } = params;
@@ -95,6 +97,7 @@ const createSubTask = async (
       400,
       "The `taskId` query parameter is required and must not be empty."
     );
+    return;
   }
 
   const { title, description, done, labels, deadline } = body;
@@ -108,6 +111,7 @@ const createSubTask = async (
       400,
       "The `title` and `description`  fields are required and must not be empty."
     );
+    return;
   }
 
   try {
@@ -143,6 +147,7 @@ const updateSubTask = async (
       400,
       "The `taskId` query parameter is required and must not be empty."
     );
+    return;
   }
 
   const { title, description, done } = body;
@@ -186,6 +191,7 @@ const deleteSubTask = async (
       400,
       "The `taskId` query parameter is required and must not be empty."
     );
+    return;
   }
 
   try {

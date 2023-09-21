@@ -8,7 +8,7 @@ import {
 } from "../utils/responseStructure.util";
 
 const getTasks = async (
-  req: CustomTasksRequest,
+  req: Request | any,
   res: Response,
   next: NextFunction
 ) => {
@@ -40,6 +40,7 @@ const getSingleTask = async (
   const taskId = req.params.taskId;
   if (!isValidString(taskId)) {
     errorResponse(res, 400, "The `taskId` parameter is required.");
+    return;
   }
 
   try {
@@ -51,6 +52,7 @@ const getSingleTask = async (
 
     if (!task) {
       errorResponse(res, 404, "Task not found.");
+      return;
     }
 
     successResponse(res, 200, task);
@@ -60,7 +62,7 @@ const getSingleTask = async (
 };
 
 const createTask = async (
-  { body, user }: CustomTasksRequest,
+  { body, user }: Request | any,
   res: Response,
   next: NextFunction
 ) => {
@@ -69,7 +71,7 @@ const createTask = async (
   const isValidDescription = isValidString(description);
 
   if (!isValidTitle || !isValidDescription) {
-    errorResponse(
+    return errorResponse(
       res,
       400,
       "The `title` and `description`  fields are required and must not be empty."
@@ -101,6 +103,7 @@ const updateTask = async (
   const { taskId } = params;
   if (!isValidString(taskId)) {
     errorResponse(res, 400, "The `taskId` parameter is required.");
+    return;
   }
 
   const { title, description } = body;
@@ -114,6 +117,7 @@ const updateTask = async (
       400,
       "The `title` and `description`  fields are required and must not be empty."
     );
+    return;
   }
 
   try {
@@ -137,6 +141,7 @@ const deleteTask = async (req: Request, res: Response, next: NextFunction) => {
   const { taskId } = req.params;
   if (!isValidString(taskId)) {
     errorResponse(res, 400, "The `taskId` parameter is required.");
+    return;
   }
 
   try {
