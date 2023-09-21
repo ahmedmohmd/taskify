@@ -9,7 +9,7 @@
   "private": true,
   "scripts": {
     "dev": "nodemon app.ts",
-    "build": "tsc",
+    "build": "npx tsc",
     "start": "node ./app.js"
   },
   "devDependencies": {
