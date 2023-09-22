@@ -9,8 +9,8 @@
   "private": true,
   "scripts": {
     "dev": "nodemon app.ts",
-    "build": "tsc",
-    "start": "node ./dist/app.js"
+    "start": "node ./dist/app.js",
+    "build": "tsc"
   },
   "devDependencies": {
     "@prisma/client": "^5.3.1",
