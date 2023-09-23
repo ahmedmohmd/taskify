@@ -1,6 +1,6 @@
-import { NextFunction, Response } from "express";
+import type { NextFunction, Response } from "express";
 import prisma from "../db/prismaClient";
-import { CustomSubTasksRequest } from "../types/subTasks.types";
+import type { CustomSubTasksRequest } from "../types/subTasks.types";
 import isValidString from "../utils/isValidString.util";
 import {
   errorResponse,
@@ -27,12 +27,14 @@ const getAllSubTasks = async (
       where: {
         taskId: taskId,
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     if (!subTasks) {
-      return res.status(404).json({
-        message: "SubTasks not found!",
-      });
+      errorResponse(res, 404, "No tasks found.");
+      return;
     }
 
     res.json({

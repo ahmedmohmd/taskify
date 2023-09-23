@@ -1,10 +1,7 @@
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import isDate from "validator/lib/isDate";
 import prisma from "../db/prismaClient";
-import { SubTask } from "../types/subTasks.types";
-import { CustomTasksRequest, Task } from "../types/tasks.types";
 import isValidString from "../utils/isValidString.util";
-
 import {
   errorResponse,
   successResponse,
@@ -15,28 +12,36 @@ const getTasks = async (
   res: Response,
   next: NextFunction
 ) => {
-  const labels = req.query.labels;
-  const done = req.query.done;
+  // All Received Labels
+  const labels = req.query.labels ? req.query.labels.split(",") : undefined;
+  const done = req.query.done === "true" ? true : false;
+  const limit = req.query.limit ? +req.query.limit : undefined;
+  const skip = req.query.skip ? +req.query.skip : undefined;
 
   try {
     const tasks = await prisma.task.findMany({
       where: {
         ownerId: req.user.id,
-        done: done,
+        done,
       },
       include: {
         subtasks: true,
       },
+      skip,
+      take: limit,
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
     if (!tasks) {
-      errorResponse(res, 404, "Task not found.");
+      errorResponse(res, 404, "Tasks not found.");
     }
 
     if (labels && labels.length > 0) {
       const filteredTasks = tasks.filter((task) => {
         return labels.every((label: string) => {
-          return task.labels?.includes(label);
+          return task.labels?.includes(label.trim());
         });
       });
 
