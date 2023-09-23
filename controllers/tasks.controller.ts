@@ -13,8 +13,8 @@ const getTasks = async (
   next: NextFunction
 ) => {
   // All Received Labels
-  const labels = req.query.labels ? req.query.labels.split(",") : undefined;
-  const done = req.query.done === "true" ? true : false;
+  const labels = req.query.labels?.split(",") ?? undefined;
+  const done = req.query.done === "true";
   const limit = req.query.limit ? +req.query.limit : undefined;
   const skip = req.query.skip ? +req.query.skip : undefined;
 
@@ -102,7 +102,12 @@ const createTask = async (
     return;
   }
 
-  if (deadline && !isDate(deadline)) {
+  if (
+    deadline &&
+    !isDate(deadline, {
+      delimiters: [",", "-", " ", "/"],
+    })
+  ) {
     errorResponse(res, 400, "`deadline` field must be a valid date.");
     return;
   }
@@ -115,7 +120,7 @@ const createTask = async (
         title,
         description,
         labels,
-        deadline,
+        deadline: new Date(deadline),
         ownerId: id,
       },
     });
