@@ -11,6 +11,7 @@ import homeRouter from "./routes/home.route";
 import subTasksRouter from "./routes/subTasks.route";
 import tasksRouter from "./routes/tasks.route";
 import usersRouter from "./routes/users.route";
+const listEndpoints = require("express-list-endpoints");
 
 const app = express();
 
@@ -37,6 +38,8 @@ app.use(
     });
   }
 );
+
+console.log(listEndpoints(app));
 
 const PORT = 7000;
 app.listen(PORT, () => {
