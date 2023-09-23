@@ -24,7 +24,7 @@ model Task {
   id          String    @id @default(uuid())
   title       String
   description String?
-  owner       User      @relation(fields: [ownerId], references: [id])
+  owner       User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId     String
   subtasks    SubTask[]
   createdAt   DateTime  @default(now())
@@ -38,7 +38,7 @@ model SubTask {
   id          Int      @id @default(autoincrement())
   title       String
   description String?
-  primaryTask Task?    @relation(fields: [taskId], references: [id])
+  primaryTask Task?    @relation(fields: [taskId], references: [id], onDelete: Cascade)
   taskId      String?
   done        Boolean  @default(false)
   createdAt   DateTime @default(now())

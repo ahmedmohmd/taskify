@@ -9,7 +9,7 @@ const successResponse = (
     return res.status(statusCode).json({ success: true, data });
   }
 
-  res.status(statusCode).send();
+  return res.status(statusCode).send();
 };
 
 const errorResponse = (res: Response, statusCode: number, message: string) => {

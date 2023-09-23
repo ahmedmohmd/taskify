@@ -8,6 +8,8 @@ interface Task {
   owner?: string;
   ownerId: string;
   subTasks?: SubTask[];
+  done: boolean;
+  labels?: string[];
   createdAt?: Date;
   updatedAt?: Date;
 }

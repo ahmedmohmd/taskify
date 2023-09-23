@@ -7,6 +7,7 @@ interface SubTask {
   description: string;
   primaryTask: Task;
   taskId: string;
+  done: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
