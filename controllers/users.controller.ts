@@ -4,7 +4,6 @@ import prisma from "../db/prismaClient";
 import isValidString from "../utils/isValidString.util";
 import protectPasswordUtil from "../utils/protectPassword.util";
 
-import path from "path";
 import removeImage from "../utils/removeImage.util";
 import {
   errorResponse,
@@ -110,6 +109,9 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
     const targetUser = await prisma.user.delete({
       where: {
         id: userId,
+      },
+      select: {
+        image: true,
       },
     });
 
