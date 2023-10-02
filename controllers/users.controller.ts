@@ -80,10 +80,10 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
       },
       data: {
         name: req.body?.name,
-        password: req.body.password
-          ? await protectPasswordUtil.encrypt(req.body?.password)
-          : undefined,
-        image: req.file ? `/images/${req.file?.filename}` : undefined,
+        password:
+          req.body.password ??
+          (await protectPasswordUtil.encrypt(req.body?.password)),
+        image: req.file?.filename ?? `/images/${req.file?.filename}`,
       },
     });
 
