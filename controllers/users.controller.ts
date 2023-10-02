@@ -4,6 +4,7 @@ import prisma from "../db/prismaClient";
 import isValidString from "../utils/isValidString.util";
 import protectPasswordUtil from "../utils/protectPassword.util";
 
+import { User } from "../types/users.types";
 import removeImage from "../utils/removeImage.util";
 import {
   errorResponse,
@@ -56,15 +57,16 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   if (req.file) {
-    const targetUser = await prisma.user.findUnique({
-      where: {
-        id: req.params.userId,
-      },
+    const targetUser: Awaited<{ image: string }> =
+      (await prisma.user.findUnique({
+        where: {
+          id: req.params.userId,
+        },
 
-      select: {
-        image: true,
-      },
-    });
+        select: {
+          image: true,
+        },
+      })) ?? { image: "" };
 
     if (targetUser?.image) {
       removeImage({ filename: targetUser.image.split("/")[2] });
@@ -106,7 +108,7 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    const targetUser = await prisma.user.delete({
+    const targetUser: Awaited<{ image: string }> = await prisma.user.delete({
       where: {
         id: userId,
       },
