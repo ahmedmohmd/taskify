@@ -57,16 +57,15 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   if (req.file) {
-    const targetUser: Awaited<{ image: string }> =
-      (await prisma.user.findUnique({
-        where: {
-          id: req.params.userId,
-        },
+    const targetUser = await prisma.user.findUnique({
+      where: {
+        id: req.params.userId,
+      },
 
-        select: {
-          image: true,
-        },
-      })) ?? { image: "" };
+      select: {
+        image: true,
+      },
+    });
 
     if (targetUser?.image) {
       removeImage({ filename: targetUser.image.split("/")[2] });
@@ -80,10 +79,10 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
       },
       data: {
         name: req.body?.name,
-        password:
-          req.body.password ??
-          (await protectPasswordUtil.encrypt(req.body?.password)),
-        image: req.file?.filename ?? `/images/${req.file?.filename}`,
+        password: req.body.password
+          ? await protectPasswordUtil.encrypt(req.body?.password)
+          : undefined,
+        image: req.file ? `/images/${req.file?.filename}` : undefined,
       },
     });
 
@@ -108,7 +107,7 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    const targetUser: Awaited<{ image: string }> = await prisma.user.delete({
+    const targetUser = await prisma.user.delete({
       where: {
         id: userId,
       },
