@@ -8,6 +8,7 @@ interface User {
   createdAt?: Date;
   updatedAt?: Date;
   tasks?: Task[];
+  image: string;
 }
 
 export { User };
