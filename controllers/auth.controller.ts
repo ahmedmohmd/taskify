@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import prisma from "../db/prismaClient";
 import jwtUtil from "../utils/jwt.util";
 import protectPasswordUtil from "../utils/protectPassword.util";
+
+import removeImage from "../utils/removeImage.util";
 import {
   errorResponse,
   successResponse,
@@ -49,18 +51,34 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 const register = async (
-  { body }: Request,
+  { body, file, params }: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const hashedPassword = await protectPasswordUtil.encrypt(body.password);
 
+    const targetUser = await prisma.user.findUnique({
+      where: {
+        email: body.email,
+      },
+    });
+
+    if (targetUser) {
+      if (file) {
+        removeImage(file);
+      }
+
+      errorResponse(res, 401, "There is an user with that email already.");
+      return;
+    }
+
     const user = await prisma.user.create({
       data: {
         name: body.name,
         email: body.email,
         password: hashedPassword,
+        image: `/images/${file?.filename}`,
       },
     });
 
@@ -74,6 +92,9 @@ const register = async (
       token: token,
     });
   } catch (error) {
+    if (file) {
+      removeImage(file);
+    }
     next(error);
   }
 };

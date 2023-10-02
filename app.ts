@@ -23,20 +23,20 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+app.use(express.static("public"));
+
 app.use("/api/", homeRouter);
 app.use("/api/auth/", authRouter);
 app.use("/api/users/", usersRouter);
 app.use("/api/tasks/", tasksRouter);
 app.use("/api/subtasks/", subTasksRouter);
 
-app.use(
-  (err: ErrorRequestHandler, _: Request, res: Response, __: NextFunction) => {
-    console.error(err);
-    return res.status(500).json({
-      message: "An error occurred!",
-    });
-  }
-);
+app.use((err: Error, _: Request, res: Response, __: NextFunction) => {
+  console.error(err);
+  return res.status(500).json({
+    message: err.message,
+  });
+});
 
 const PORT = 7000;
 app.listen(PORT, () => {
