@@ -5,12 +5,15 @@ import validateMiddleware from "../middlewares/validate.middleware";
 
 const router = express.Router();
 
-router.post(
-  "/login",
-  validateMiddleware.validateEmail,
-  validateMiddleware.validatePassword,
-  authController.login
-);
+// router.post(
+//   "/login/admin",
+
+//   authController.loginAdmin
+// );
+
+router.post("/login/student", authController.loginStudent);
+
+// router.post("/login/instructor", authController.loginInstructor);
 
 router.post(
   "/register",
